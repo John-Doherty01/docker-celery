@@ -1,0 +1,26 @@
+CELERYD_NODES="worker"
+
+# App instance to use
+# comment out this line if you don't use an app
+CELERY_APP="findmyhitman"
+CELERY_BIN="/usr/local/bin/celery"
+
+# Where to chdir at start.
+CELERYD_CHDIR="/usr/src/app/findmyhitman"
+CELERYBEAT_CHDIR="/usr/src/app/findmyhitman"
+
+# Extra command-line arguments to the worker
+# CELERYD_OPTS="-Q:celery"
+CELERYBEAT_OPTS="--scheduler django_celery_beat.schedulers:DatabaseScheduler"
+
+# Set logging level to DEBUG
+CELERYD_LOG_LEVEL="DEBUG"
+
+# %n will be replaced with the first part of the nodename.
+CELERYD_LOG_FILE="/usr/src/app/logs/celery/%n%I.log"
+CELERYD_PID_FILE="/usr/src/app/logs/celery/pid/%n.pid"
+
+CELERYD_USER="root"
+CELERYD_GROUP="celery"
+
+CELERY_CREATE_DIRS=1

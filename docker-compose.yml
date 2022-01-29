@@ -1,0 +1,111 @@
+version: "3.9"
+services:
+  flower:
+    build:
+      context: .
+      dockerfile: docker/celery-flower/Dockerfile
+    environment:
+      DATABASE_NAME: hitman_db
+      DATABASE_USER: hitman
+      DATABASE_PASSWORD: hitman
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - postgres
+      - redis
+      - celery-worker
+    ports:
+      - "5555:5555"
+  rest-api:
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/rest-api/Dockerfile
+    depends_on:
+      - celery-worker
+      - flower
+    volumes:
+      - .:/usr/src/app
+    environment:
+      DATABASE_NAME: hitman_db
+      DATABASE_USER: hitman
+      DATABASE_PASSWORD: hitman
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    networks:
+      - postgres
+      - redis
+    ports:
+      - "8000:8000"
+  celery-worker:
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/celery-worker/Dockerfile
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_NAME: hitman_db
+      DATABASE_USER: hitman
+      DATABASE_PASSWORD: hitman
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+    networks:
+      - postgres
+      - redis
+      - celery-worker
+  redis:
+    image: "redis:alpine"
+    networks:
+      - redis
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+  redis:
+    driver: bridge
+  celery-worker:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:

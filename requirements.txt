@@ -1,0 +1,11 @@
+psycopg2==2.9.3
+django==3.2.11
+djangorestframework==3.13.1
+markdown==3.3.6
+django-filter==21.1
+celery==5.2.3
+django_celery_beat==2.2.1
+redis==4.1.1
+flower==1.0.0
+pyyaml==6.0
+watchdog==2.1.6
