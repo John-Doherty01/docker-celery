@@ -52,6 +52,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - pgadmin
     environment:
       DATABASE_NAME: hitman_db
       DATABASE_USER: hitman
@@ -63,7 +64,6 @@ services:
       - postgres
       - redis
       - celery-worker
-      - pgadmin
   redis:
     image: "redis:alpine"
     networks:
