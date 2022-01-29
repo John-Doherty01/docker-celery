@@ -63,6 +63,7 @@ services:
       - postgres
       - redis
       - celery-worker
+      - pgadmin
   redis:
     image: "redis:alpine"
     networks:
