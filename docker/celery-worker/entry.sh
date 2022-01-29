@@ -8,4 +8,4 @@ python manage.py collectstatic --clear --noinput
 
 echo "Starting celery worker"
 /etc/init.d/celerybeat start
-exec watchmedo auto-restart -d /usr/src/app -p '*.py' -- celery -A findmyhitman worker -Q celery --loglevel=info
+exec celery -A findmyhitman worker -Q celery --loglevel=info

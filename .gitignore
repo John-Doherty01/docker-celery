@@ -3,4 +3,4 @@ dump.rdb
 *.log
 .DS_Store
 .idea/
-static/*
+static/
