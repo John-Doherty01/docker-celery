@@ -5,6 +5,7 @@ markdown==3.3.6
 django-filter==21.1
 celery==5.2.3
 django_celery_beat==2.2.1
+channels==3.0.4
 redis==4.1.1
 flower==1.0.0
 pyyaml==6.0
