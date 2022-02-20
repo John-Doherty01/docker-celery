@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from hitman_rest_api.channels import TaskProgressConsumer
 from hitman_rest_api.views import GetHitmen, StartNewHitJob
 
 urlpatterns = [
@@ -23,4 +24,8 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("hitmen/all", GetHitmen.as_view()),
     path("hitmen/start-job", StartNewHitJob.as_view()),
+]
+
+websocket_urlpatterns = [
+    path("task/progress/<str:taskID>/", TaskProgressConsumer.as_asgi()),
 ]

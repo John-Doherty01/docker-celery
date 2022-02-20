@@ -26,7 +26,11 @@ class StartNewHitJob(APIView):
 
     def post(self, request):
         name = request.data.get("target_name")
-        start_new_hit_job.delay(name)
+        new_celery_task = start_new_hit_job.delay(name)
         return Response(
-            data={"result": f"Job created for ld;as hjkhjk hjkhjk hjkhjk jkhjk dfsdf {name}"}, status=status.HTTP_200_OK
+            data={
+                "result": f"Job created for {name}",
+                "celery_task_id": new_celery_task.id,
+            },
+            status=status.HTTP_200_OK,
         )
