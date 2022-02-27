@@ -8,11 +8,70 @@ import {
   CeleryTaskProgressBar,
   StartCeleryTaskButton,
 } from "./celery-task-progress-bar/progress-bar";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  TextField,
+  Typography,
+} from "@mui/material";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import { DateTimePicker } from "@mui/lab";
 
 interface CeleryTaskUpdate {
   progress: number;
   status: string;
+}
+
+interface ScheduleCeleryTaskProps {
+  onSubmitCallback: (date: Date | null) => void;
+}
+
+function ScheduleCeleryTask({
+  onSubmitCallback,
+}: ScheduleCeleryTaskProps): ReactElement {
+  const [dateTimeValue, setDateTimeValue] = useState(null);
+  return (
+    <Box
+      sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
+      <Card sx={{ minWidth: 275 }}>
+        <CardContent>
+          <Typography variant="h5" component="div">
+            Schedule Celery Task
+          </Typography>
+          <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            Provide time for trigger.
+          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateTimePicker
+              renderInput={(props) => <TextField {...props} />}
+              label="Execution time"
+              value={dateTimeValue}
+              onChange={(newValue) => {
+                setDateTimeValue(newValue);
+              }}
+            />
+          </LocalizationProvider>
+        </CardContent>
+        <CardActions>
+          <Button
+            size="small"
+            onClick={() => {
+              onSubmitCallback(dateTimeValue);
+            }}
+          >
+            Submit
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
+  );
 }
 
 function App() {
@@ -53,13 +112,20 @@ function App() {
       });
   };
 
+  const onSubmitScheduledTask = (newDate: Date | null) => {
+    if (newDate !== null) {
+      console.log(newDate);
+    }
+  };
+
   return (
     <div>
       <AppNavbar app_name="Hitman" />
-      <div style={{ marginTop: "20px" }}>
+      <div style={{ margin: "20px" }}>
         <CeleryTaskProgressBar progressValue={progressValue} />
         <StartCeleryTaskButton onClickCallback={CreateCeleryTask} />
       </div>
+      <ScheduleCeleryTask onSubmitCallback={onSubmitScheduledTask} />
     </div>
   );
 }
