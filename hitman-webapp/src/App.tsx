@@ -15,13 +15,16 @@ import {
   Card,
   CardActions,
   CardContent,
-  CardHeader,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import { DateTimePicker } from "@mui/lab";
+import { TimePicker } from "@mui/lab";
 
 interface CeleryTaskUpdate {
   progress: number;
@@ -36,6 +39,7 @@ function ScheduleCeleryTask({
   onSubmitCallback,
 }: ScheduleCeleryTaskProps): ReactElement {
   const [dateTimeValue, setDateTimeValue] = useState(null);
+  const [dayOfWeek, setDayOfWeek] = useState("monday");
   return (
     <Box
       sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
@@ -46,10 +50,31 @@ function ScheduleCeleryTask({
             Schedule Celery Task
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            Provide time for trigger.
+            Setup weekly schedule.
           </Typography>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">Day</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={dayOfWeek}
+              label="Day"
+              onChange={(e) => {
+                setDayOfWeek(e.target.value);
+              }}
+              style={{ minWidth: "200px" }}
+            >
+              <MenuItem value={"monday"}>Monday</MenuItem>
+              <MenuItem value={"tuesday"}>Tuesday</MenuItem>
+              <MenuItem value={"wednesday"}>Wednesday</MenuItem>
+              <MenuItem value={"thursday"}>Thursday</MenuItem>
+              <MenuItem value={"friday"}>Friday</MenuItem>
+              <MenuItem value={"saturday"}>Saturday</MenuItem>
+              <MenuItem value={"sunday"}>Sunday</MenuItem>
+            </Select>
+          </FormControl>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DateTimePicker
+            <TimePicker
               renderInput={(props) => <TextField {...props} />}
               label="Execution time"
               value={dateTimeValue}
