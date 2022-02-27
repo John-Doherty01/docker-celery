@@ -179,9 +179,25 @@ function App() {
   };
 
   const onSubmitScheduledTask = (newDate: Date | null, dayOfWeek: string[]) => {
-    debugger;
     if (newDate !== null) {
-      console.log(newDate);
+      fetch("http://localhost:8000/hitmen/schedule", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          target_name: "Keanu Reeves",
+          schedule_time: newDate,
+          days_of_week: dayOfWeek,
+        }),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        });
     }
   };
 
