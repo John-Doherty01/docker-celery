@@ -117,6 +117,7 @@ function ScheduleCeleryTask({
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <TimePicker
               renderInput={(props) => <TextField {...props} />}
+              ampm={false}
               label="Execution time"
               value={dateTimeValue}
               onChange={(newValue) => {

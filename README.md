@@ -11,4 +11,5 @@ docker-compose contains all required containers.
 - After doing so run the rest-api container once hitman_db database has been setup and running.
 - Visit http://localhost:8000/hitmen/start-job to start a job, monitor celery logs to watch processing.
 - Visit http://localhost:5555/ for celery flower.
+- `celery -A findmyhitman worker --beat --loglevel=DEBUG --scheduler django_celery_beat.schedulers:DatabaseScheduler`
 
