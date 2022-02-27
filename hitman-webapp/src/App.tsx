@@ -8,7 +8,7 @@ import {
   CeleryTaskProgressBar,
   StartCeleryTaskButton,
 } from "./celery-task-progress-bar/progress-bar";
-import { ReactElement, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   Box,
   Button,
@@ -18,9 +18,12 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  OutlinedInput,
   Select,
   TextField,
+  Theme,
   Typography,
+  useTheme,
 } from "@mui/material";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
@@ -32,14 +35,45 @@ interface CeleryTaskUpdate {
 }
 
 interface ScheduleCeleryTaskProps {
-  onSubmitCallback: (date: Date | null) => void;
+  onSubmitCallback: (date: Date | null, dayOfWeek: string[]) => void;
+}
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+function getStyles(name: string, personName: string[], theme: Theme) {
+  return {
+    fontWeight:
+      personName.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
 }
 
 function ScheduleCeleryTask({
   onSubmitCallback,
 }: ScheduleCeleryTaskProps): ReactElement {
+  const theme = useTheme();
   const [dateTimeValue, setDateTimeValue] = useState(null);
-  const [dayOfWeek, setDayOfWeek] = useState("monday");
+  const [dayOfWeek, setDayOfWeek] = React.useState<string[]>(["monday"]);
+
+  const daysOfWeekArray: string[] = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
   return (
     <Box
       sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
@@ -55,22 +89,29 @@ function ScheduleCeleryTask({
           <FormControl>
             <InputLabel id="demo-simple-select-label">Day</InputLabel>
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="demo-multiple-name-label"
+              id="demo-multiple-name"
+              multiple
               value={dayOfWeek}
-              label="Day"
               onChange={(e) => {
-                setDayOfWeek(e.target.value);
+                setDayOfWeek(
+                  typeof e.target.value === "string"
+                    ? e.target.value.split(",")
+                    : e.target.value
+                );
               }}
-              style={{ minWidth: "200px" }}
+              input={<OutlinedInput label="Day" />}
+              MenuProps={MenuProps}
             >
-              <MenuItem value={"monday"}>Monday</MenuItem>
-              <MenuItem value={"tuesday"}>Tuesday</MenuItem>
-              <MenuItem value={"wednesday"}>Wednesday</MenuItem>
-              <MenuItem value={"thursday"}>Thursday</MenuItem>
-              <MenuItem value={"friday"}>Friday</MenuItem>
-              <MenuItem value={"saturday"}>Saturday</MenuItem>
-              <MenuItem value={"sunday"}>Sunday</MenuItem>
+              {daysOfWeekArray.map((day) => (
+                <MenuItem
+                  key={day}
+                  value={day}
+                  style={getStyles(day, dayOfWeek, theme)}
+                >
+                  {day}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -88,7 +129,7 @@ function ScheduleCeleryTask({
           <Button
             size="small"
             onClick={() => {
-              onSubmitCallback(dateTimeValue);
+              onSubmitCallback(dateTimeValue, dayOfWeek);
             }}
           >
             Submit
@@ -137,7 +178,8 @@ function App() {
       });
   };
 
-  const onSubmitScheduledTask = (newDate: Date | null) => {
+  const onSubmitScheduledTask = (newDate: Date | null, dayOfWeek: string[]) => {
+    debugger;
     if (newDate !== null) {
       console.log(newDate);
     }
