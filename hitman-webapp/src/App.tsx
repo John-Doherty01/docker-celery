@@ -3,7 +3,6 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { AppNavbar } from "./navbar/navbar";
 import {
   CeleryTaskProgressBar,
   StartCeleryTaskButton,
@@ -204,7 +203,6 @@ function App() {
 
   return (
     <div>
-      <AppNavbar app_name="Hitman" />
       <div style={{ margin: "20px" }}>
         <CeleryTaskProgressBar progressValue={progressValue} />
         <StartCeleryTaskButton onClickCallback={CreateCeleryTask} />
