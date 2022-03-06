@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "oauth2_provider",
     "rest_framework",
     "django_celery_beat",
     "corsheaders",
@@ -146,3 +147,19 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+OIDC_KEY = Path(str(BASE_DIR) + "/oidc.key").read_text()
+
+OAUTH2_PROVIDER = {
+    "OIDC_ENABLED": True,
+    "OIDC_RSA_PRIVATE_KEY": OIDC_KEY,
+    "SCOPES": {},
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+    ]
+}
+
+LOGIN_URL = "/admin/login/"

@@ -22,6 +22,7 @@ from hitman_rest_api.views import GetHitmen, StartNewHitJob, ScheduleNewHitJob
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path("hitmen/all", GetHitmen.as_view()),
     path("hitmen/start-job", StartNewHitJob.as_view()),
     path("hitmen/schedule", ScheduleNewHitJob.as_view()),
