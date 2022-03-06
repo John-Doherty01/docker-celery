@@ -1,11 +1,35 @@
 import json
 
 from rest_framework import permissions, status, serializers
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from hitman_rest_api.tasks import start_new_hit_job
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from dateutil import parser
+from django.contrib.auth import get_user_model  # If used custom user model
+
+UserModel = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    password = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+        user = UserModel.objects.create_user(
+            username=validated_data["username"], password=validated_data["password"],
+        )
+
+        return user
+
+    class Meta:
+        model = UserModel
+        fields = (
+            "id",
+            "username",
+            "password",
+        )
 
 
 class StringListField(serializers.ListField):
@@ -78,3 +102,9 @@ class ScheduleNewHitJob(APIView):
         return Response(
             data={"result": f"Task scheduled for execution"}, status=status.HTTP_200_OK,
         )
+
+
+class CreateUserView(CreateAPIView):
+    model = get_user_model()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = UserSerializer

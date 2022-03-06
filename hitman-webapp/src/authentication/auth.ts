@@ -15,7 +15,8 @@ axiosAuthInstance.interceptors.request.use((config) => {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-})
+});
+
 axiosAuthInstance.interceptors.response.use((response) => {
     return response;
 }, async (error) => {
@@ -26,7 +27,21 @@ axiosAuthInstance.interceptors.response.use((response) => {
         return axiosAuthInstance(originalRequest);
     }
     return Promise.reject(error);
-})
+});
+
+export async function createUser(username: string, password: string) {
+    const url = HOST_URL + 'user/create';
+    const request = axios.post(url, {
+        username: username,
+        password: password
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    await request;
+    await login(username, password);
+}
 
 export function login(username: string, password: string) {
     const url = HOST_URL + 'o/token/';
@@ -47,7 +62,7 @@ export function login(username: string, password: string) {
             const token = JSON.stringify(res.data);
             localStorage.setItem(TOKEN_LOCALSTORAGE_KEY, token);
             resolve(res);
-        }).catch((err)=>{
+        }).catch((err) => {
             reject(err);
         });
     });
