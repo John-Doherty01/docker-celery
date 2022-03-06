@@ -11,6 +11,7 @@ axiosAuthInstance.interceptors.request.use((config) => {
     const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
     if (local === null) return config;
     const token = JSON.parse(local).access_token;
+    config.url = HOST_URL + config.url;
     if (token && config.headers !== undefined) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -41,6 +42,13 @@ export async function createUser(username: string, password: string) {
     });
     await request;
     await login(username, password);
+}
+
+export function getIsUserAuthenticated(): boolean {
+    const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
+    if (local === null) return false;
+    const token = JSON.parse(local);
+    return token.access_token !== null && token.access_token !== "";
 }
 
 export function login(username: string, password: string) {
