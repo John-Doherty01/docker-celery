@@ -34,13 +34,20 @@ axiosAuthInstance.interceptors.response.use(
   }
 );
 
-export async function createUser(username: string, password: string) {
+export async function createUser(
+  username: string,
+  password: string,
+  firstName: string,
+  lastName: string
+) {
   const url = HOST_URL + "user/create";
   const request = axios.post(
     url,
     {
       username: username,
       password: password,
+      first_name: firstName,
+      last_name: lastName,
     },
     {
       headers: {
@@ -50,8 +57,6 @@ export async function createUser(username: string, password: string) {
   );
   await request;
   await login(username, password);
-
-  // ToDo: Redirect to home
 }
 
 export function getIsUserAuthenticated(): boolean {
@@ -126,7 +131,6 @@ function refreshToken() {
       .catch((err) => {
         refreshing = false;
         reject(err);
-        // ToDo: Redirect to login
       });
   });
 }
