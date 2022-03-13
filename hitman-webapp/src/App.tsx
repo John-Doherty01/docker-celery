@@ -7,7 +7,7 @@ import {
   CeleryTaskProgressBar,
   StartCeleryTaskButton,
 } from "./celery-task-progress-bar/progress-bar";
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -27,6 +27,8 @@ import {
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { TimePicker } from "@mui/lab";
+import { useAuth } from "./authentication/auth-provider";
+import { ApiService } from "./services/hitman";
 
 interface CeleryTaskUpdate {
   progress: number;
@@ -200,6 +202,14 @@ function App() {
         });
     }
   };
+
+  const { client } = useAuth();
+  useMemo(() => {
+    const service = new ApiService(client);
+    service.getHitmen().then((res) => {
+      console.log(res.data);
+    });
+  }, [client]);
 
   return (
     <div>

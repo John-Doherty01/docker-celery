@@ -55,7 +55,7 @@ class HitJobSerializer(serializers.Serializer):
 
 
 class GetHitmen(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         return Response(

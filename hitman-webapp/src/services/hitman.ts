@@ -21,4 +21,13 @@ export class ApiService {
       }
     );
   }
+
+  getHitmen(): Promise<AxiosResponse<any>> {
+    const url = "hitmen/all";
+    return this.axiosAuthInstance.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }
