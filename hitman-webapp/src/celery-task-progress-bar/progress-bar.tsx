@@ -6,13 +6,13 @@ interface CeleryTaskProgressBarProps {
   progressValue: number;
 }
 
-interface StartCeleryTaskButton {
+interface StartCeleryTaskButtonProps {
   onClickCallback: () => void;
 }
 
 export function StartCeleryTaskButton({
   onClickCallback,
-}: StartCeleryTaskButton): ReactElement {
+}: StartCeleryTaskButtonProps): ReactElement {
   return (
     <Box
       sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}

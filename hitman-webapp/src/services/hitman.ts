@@ -1,17 +1,24 @@
-import { axiosAuthInstance } from "../authentication/auth";
+import { AxiosInstance, AxiosResponse } from "axios";
 
-export function startNewHitJob() {
-  const url = "hitmen/start-job";
-  const request = axiosAuthInstance.post(
-    url,
-    {
-      target_name: "Keanu Reeves",
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
+export class ApiService {
+  axiosAuthInstance: AxiosInstance;
+
+  constructor(axiosAuthInstance: AxiosInstance) {
+    this.axiosAuthInstance = axiosAuthInstance;
+  }
+
+  startNewHitJob(targetName: string): Promise<AxiosResponse<any>> {
+    const url = "hitmen/start-job";
+    return this.axiosAuthInstance.post(
+      url,
+      {
+        target_name: targetName,
       },
-    }
-  );
-  return request;
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
 }
