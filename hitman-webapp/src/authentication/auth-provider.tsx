@@ -30,7 +30,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
       const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
       if (local === null) return config;
       const token = JSON.parse(local).access_token;
-      config.url = HOST_URL + config.url;
+      if(!config.url?.includes(HOST_URL)) config.url = HOST_URL + config.url;
       if (token && config.headers !== undefined) {
         config.headers.Authorization = `Bearer ${token}`;
       }
