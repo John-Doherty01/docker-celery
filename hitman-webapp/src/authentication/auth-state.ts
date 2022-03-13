@@ -9,12 +9,10 @@ export interface AuthState<TUser extends User = User> {
   error?: Error;
   isAuthenticated: boolean;
   isLoading: boolean;
-  isRefreshing: boolean;
   user?: TUser;
 }
 
 export const initialAuthState: AuthState = {
   isAuthenticated: false,
   isLoading: false,
-  isRefreshing: false,
 };

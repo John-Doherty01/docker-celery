@@ -15,21 +15,21 @@ interface AuthProviderOptions {
   children?: React.ReactNode;
 }
 
+let refreshPromise: Promise<AxiosResponse<any, any>> | null = null;
+
 export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
   const { children } = opts;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
   const navigate = useNavigate();
-
   const refreshToken = useCallback((): Promise<AxiosResponse<any>> => {
     const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
     return new Promise<AxiosResponse<any>>((resolve, reject) => {
-      if (local === null || state.isRefreshing) {
+      if (local === null) {
         reject("already refreshing or localstorage token not found");
         return;
       }
       const token = JSON.parse(local);
       const url = HOST_URL + "o/token/";
-      dispatch({ type: "REFRESHING", value: true });
       const request = axios.post(
         url,
         new URLSearchParams({
@@ -48,16 +48,14 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
         .then((res) => {
           const token = JSON.stringify(res.data);
           localStorage.setItem(TOKEN_LOCALSTORAGE_KEY, token);
-          dispatch({ type: "REFRESHING", value: false });
           resolve(res);
         })
         .catch((err) => {
-          dispatch({ type: "REFRESHING", value: false });
           navigate("/login", { replace: true });
           reject(err);
         });
     });
-  }, [state.isRefreshing, navigate]);
+  }, [navigate]);
 
   const getClient = useCallback((): AxiosInstance => {
     const newInstance = axios.create();
@@ -83,7 +81,17 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
         if (error.response === undefined) return Promise.reject(error);
         if (error.response.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
-          await refreshToken();
+          if (refreshPromise === null) {
+            const prom = refreshToken().then((res) => {
+              refreshPromise = null;
+              return res;
+            });
+            refreshPromise = prom;
+            await prom;
+          } else {
+            await refreshPromise;
+          }
+
           return newInstance(originalRequest);
         }
         return Promise.reject(error);
