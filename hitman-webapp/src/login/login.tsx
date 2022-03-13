@@ -11,9 +11,11 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useAuth } from "../authentication/auth-provider";
 
 export function LoginScreen(): ReactElement {
   const theme = createTheme();
+  const { login } = useAuth();
 
   const handleSubmit = (event: {
     preventDefault: () => void;
@@ -21,10 +23,13 @@ export function LoginScreen(): ReactElement {
   }) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    const formData = {
       email: data.get("email"),
       password: data.get("password"),
-    });
+    };
+    if (formData.email !== null && formData.password !== null) {
+      login(formData.email.toString(), formData.password.toString());
+    }
   };
 
   return (
