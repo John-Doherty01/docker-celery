@@ -1,16 +1,9 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useMemo, useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext, { AuthContextInterface } from "./auth-context";
 import { reducer } from "./reducer";
 import { initialAuthState, User } from "./auth-state";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import {
   CLIENT_ID,
   CLIENT_SECRET,
@@ -24,44 +17,8 @@ interface AuthProviderOptions {
 
 export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
   const { children } = opts;
-  const [client] = useState(() => {
-    const newAxios = axios.create();
-    newAxios.interceptors.request.use((config) => {
-      const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
-      if (local === null) return config;
-      const token = JSON.parse(local).access_token;
-      if(!config.url?.includes(HOST_URL)) config.url = HOST_URL + config.url;
-      if (token && config.headers !== undefined) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      dispatch({ type: "LOADING", value: true });
-      return config;
-    });
-    newAxios.interceptors.response.use(
-      (response) => {
-        dispatch({ type: "LOADING", value: false });
-        return response;
-      },
-      async (error) => {
-        dispatch({ type: "LOADING", value: false });
-        const originalRequest = error.config;
-        if (error.response === undefined) return Promise.reject(error);
-        if (error.response.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          await refreshToken();
-          return newAxios(originalRequest);
-        }
-        return Promise.reject(error);
-      }
-    );
-    return newAxios;
-  });
   const [state, dispatch] = useReducer(reducer, initialAuthState);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    (async (): Promise<void> => {})();
-  }, []);
 
   const refreshToken = useCallback((): Promise<AxiosResponse<any>> => {
     const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
@@ -101,6 +58,39 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
         });
     });
   }, [state.isRefreshing, navigate]);
+
+  const getClient = useCallback((): AxiosInstance => {
+    const newInstance = axios.create();
+    newInstance.interceptors.request.use((config) => {
+      const local = localStorage.getItem(TOKEN_LOCALSTORAGE_KEY);
+      if (local === null) return config;
+      const token = JSON.parse(local).access_token;
+      if (!config.url?.includes(HOST_URL)) config.url = HOST_URL + config.url;
+      if (token && config.headers !== undefined) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      dispatch({ type: "LOADING", value: true });
+      return config;
+    });
+    newInstance.interceptors.response.use(
+      (response) => {
+        dispatch({ type: "LOADING", value: false });
+        return response;
+      },
+      async (error) => {
+        dispatch({ type: "LOADING", value: false });
+        const originalRequest = error.config;
+        if (error.response === undefined) return Promise.reject(error);
+        if (error.response.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          await refreshToken();
+          return newInstance(originalRequest);
+        }
+        return Promise.reject(error);
+      }
+    );
+    return newInstance;
+  }, [refreshToken]);
 
   const login = useCallback(
     (username: string, password: string): Promise<AxiosResponse<any>> => {
@@ -170,9 +160,9 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
       refreshToken,
       login,
       createUser,
-      client,
+      getClient,
     };
-  }, [state, refreshToken, login, createUser, client]);
+  }, [state, refreshToken, login, createUser, getClient]);
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

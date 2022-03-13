@@ -203,13 +203,13 @@ function App() {
     }
   };
 
-  const { client } = useAuth();
+  const { getClient } = useAuth();
   useMemo(() => {
-    const service = new ApiService(client);
+    const service = new ApiService(getClient());
     service.getHitmen().then((res) => {
       console.log(res.data);
     });
-  }, [client]);
+  }, [getClient]);
 
   return (
     <div>

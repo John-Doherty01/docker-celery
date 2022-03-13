@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { AuthState, initialAuthState, User } from "./auth-state";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosInstance, AxiosResponse } from "axios";
 
 export interface AuthContextInterface<TUser extends User = User>
   extends AuthState<TUser> {
@@ -12,7 +12,7 @@ export interface AuthContextInterface<TUser extends User = User>
   ) => void;
   login: (username: string, password: string) => Promise<AxiosResponse<any>>;
   refreshToken: () => Promise<AxiosResponse<any>>;
-  client: AxiosInstance;
+  getClient: () => AxiosInstance;
 }
 
 const stub = (): never => {
@@ -24,7 +24,7 @@ const initialContext = {
   createUser: stub,
   login: stub,
   refreshToken: stub,
-  client: axios.create(),
+  getClient: stub,
 };
 
 const AuthContext = createContext<AuthContextInterface>(initialContext);
