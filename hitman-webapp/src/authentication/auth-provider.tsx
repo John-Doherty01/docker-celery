@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useState,
 } from "react";
-
+import { useNavigate } from "react-router-dom";
 import AuthContext, { AuthContextInterface } from "./auth-context";
 import { reducer } from "./reducer";
 import { initialAuthState, User } from "./auth-state";
@@ -57,6 +57,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
     return newAxios;
   });
   const [state, dispatch] = useReducer(reducer, initialAuthState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async (): Promise<void> => {})();
@@ -95,10 +96,11 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
         })
         .catch((err) => {
           dispatch({ type: "REFRESHING", value: false });
+          navigate("/login", { replace: true });
           reject(err);
         });
     });
-  }, [state.isRefreshing]);
+  }, [state.isRefreshing, navigate]);
 
   const login = useCallback(
     (username: string, password: string): Promise<AxiosResponse<any>> => {
@@ -123,6 +125,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           .then((res) => {
             const token = JSON.stringify(res.data);
             localStorage.setItem(TOKEN_LOCALSTORAGE_KEY, token);
+            navigate("/", { replace: true });
             resolve(res);
           })
           .catch((err) => {
@@ -130,7 +133,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           });
       });
     },
-    []
+    [navigate]
   );
 
   const createUser = useCallback(
