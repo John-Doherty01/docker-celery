@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hitman-celery-flower-deployment
+  namespace: default
+  labels:
+    app: hitman-celery-flower
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hitman-celery-flower
+  template:
+    metadata:
+      labels:
+        app: hitman-celery-flower
+    spec:
+      terminationGracePeriodSeconds: 3800
+      containers:
+        - name: hitman-celery-flower-image
+          image: ghcr.io/john-doherty01/hitman-celery-flower:VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "100M"
+            limits:
+              cpu: "150m"
+              memory: "200M"
+          ports:
+            - containerPort: 8585
+          readinessProbe:
+            exec:
+              command: [
+                "/usr/bin/python",
+                "-c",
+                "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
+              ]
+            initialDelaySeconds: 120
+            periodSeconds: 300
+          livenessProbe:
+            exec:
+              command: [
+                "/usr/bin/python",
+                "-c",
+                "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
+              ]
+            initialDelaySeconds: 120
+            periodSeconds: 300
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_name
+                  optional: false
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_user
+                  optional: false
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_password
+                  optional: false
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_host
+                  optional: false
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_port
+                  optional: false
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: redis_url
+                  optional: false
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hitman-celery-flower-load-balancer
+spec:
+  selector:
+    app: hitman-celery-flower
+  ports:
+    - port: 80
+      name: http
+      targetPort: 8585
+    - port: 443
+      name: https
+      targetPort: 8585
+  type: LoadBalancer

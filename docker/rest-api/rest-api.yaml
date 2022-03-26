@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hitman-rest-api-deployment
+  namespace: default
+  labels:
+    app: hitman-rest-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hitman-rest-api
+  template:
+    metadata:
+      labels:
+        app: hitman-rest-api
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+    spec:
+      terminationGracePeriodSeconds: 300
+      containers:
+        - name: hitman-rest-api-docker-image
+          image: ghcr.io/john-doherty01/hitman-rest-api:VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "100M"
+            limits:
+              cpu: "500m"
+              memory: "1000M"
+          ports:
+            - containerPort: 8585
+          readinessProbe:
+            httpGet:
+              path: /admin/login/?next=/admin/
+              port: 8585
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /admin/login/?next=/admin/
+              port: 8585
+            initialDelaySeconds: 15
+            periodSeconds: 120
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_name
+                  optional: false
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_user
+                  optional: false
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_password
+                  optional: false
+            - name: DATABASE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_host
+                  optional: false
+            - name: DATABASE_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: database_port
+                  optional: false
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: redis_url
+                  optional: false
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hitman-rest-api-load-balancer
+spec:
+  selector:
+    app: hitman-rest-api
+  ports:
+    - port: 80
+      name: http
+      targetPort: 8585
+    - port: 443
+      name: https
+      targetPort: 8585
+  type: LoadBalancer
