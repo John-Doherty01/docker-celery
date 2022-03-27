@@ -34,8 +34,9 @@ jobs:
         with:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECTL_CONFIG }}
-          BUILD_NUMBER: ${{ github.run_number }}
       - name: Deploy to Cluster
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
         run: |
           export BUILD_TAG=hitman-prod-$BUILD_NUMBER
           sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/rest-api/rest-api.yaml
