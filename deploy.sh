@@ -12,7 +12,7 @@ sudo apt-get update
 sudo apt-get install -y kubectl
 mkdir ~/.kube/
 touch ~/.kube/config
-echo $KUBECTL_CONFIG | tee ~/.kube/config
+echo $KUBECTL_CONFIG > ~/.kube/config
 
 sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/rest-api/rest-api.yaml
 sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/celery-worker/celery-worker.yaml
