@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-prod:
+  push_docker_image_to_github_packages:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
@@ -21,3 +21,25 @@ jobs:
           CR_PAT: ${{ secrets.CR_PAT }}
           KUBECTL_CONFIG: ${{ secrets.KUBECTL_CONFIG }}
           BUILD_NUMBER: ${{ github.run_number }}
+  deploy_to_kubernetes_cluster:
+    name: Deploy to Kubernetes Cluster
+    needs: push_docker_image_to_github_packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Set Kubernetes Context
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBECTL_CONFIG }}
+        env:
+          BUILD_TAG: hitman-prod-${{ github.run_number }}
+      - name: Deploy to Cluster
+        run: |
+          sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/rest-api/rest-api.yaml
+          sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/celery-worker/celery-worker.yaml
+          sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/celery-flower/celery-flower.yaml
+          kubectl apply -f ./docker/rest-api/rest-api.yaml
+          kubectl apply -f ./docker/celery-worker/celery-worker.yaml
+          kubectl apply -f ./docker/celery-flower/celery-flower.yaml
