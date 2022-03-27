@@ -35,9 +35,10 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBECTL_CONFIG }}
         env:
-          BUILD_TAG: hitman-prod-${{ github.run_number }}
+          BUILD_NUMBER: ${{ github.run_number }}
       - name: Deploy to Cluster
         run: |
+          export BUILD_TAG=hitman-prod-$BUILD_NUMBER
           sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/rest-api/rest-api.yaml
           cat ./docker/rest-api/rest-api.yaml
           sed -i "s/VERSION/${BUILD_TAG}/g" ./docker/celery-worker/celery-worker.yaml
