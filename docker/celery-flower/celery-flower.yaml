@@ -21,6 +21,8 @@ spec:
         app: hitman-celery-flower
     spec:
       terminationGracePeriodSeconds: 3800
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
       containers:
         - name: hitman-celery-flower-image
           image: ghcr.io/john-doherty01/hitman-celery-flower:VERSION

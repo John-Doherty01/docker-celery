@@ -23,6 +23,8 @@ spec:
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
     spec:
       terminationGracePeriodSeconds: 300
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
       containers:
         - name: hitman-rest-api-docker-image
           image: ghcr.io/john-doherty01/hitman-rest-api:VERSION

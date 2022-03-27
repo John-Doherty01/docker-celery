@@ -21,6 +21,8 @@ spec:
         app: hitman-celery-worker
     spec:
       terminationGracePeriodSeconds: 86400
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
       containers:
         - name: hitman-celery-worker-docker-image
           image: ghcr.io/john-doherty01/hitman-celery-worker:VERSION
