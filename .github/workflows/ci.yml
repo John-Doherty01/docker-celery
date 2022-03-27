@@ -9,6 +9,7 @@ on:
 
 jobs:
   push_docker_image_to_github_packages:
+    name: Build and push docker images
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
