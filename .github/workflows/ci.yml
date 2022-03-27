@@ -9,7 +9,6 @@ on:
 
 jobs:
   deploy-prod:
-    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
