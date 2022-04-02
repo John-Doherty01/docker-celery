@@ -34,8 +34,6 @@ spec:
             limits:
               cpu: "500m"
               memory: "1000M"
-          ports:
-            - containerPort: 8585
           readinessProbe:
             exec:
               command: [
