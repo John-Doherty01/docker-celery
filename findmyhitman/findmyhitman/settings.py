@@ -24,10 +24,10 @@ SECRET_KEY = "django-insecure-i*d^)wbvs5b5*j=n3i4^(sa($v2#nb($08d22a=8jwne#lrjch
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOST", "*")]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000")
 ]
 
 # Application definition
@@ -128,8 +128,8 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis://localhost:6379/0",)
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_URL", "redis://localhost:6379/0",)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
@@ -143,7 +143,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(os.environ.get("REDIS_URL", "redis://localhost:6379/0"))],
+            "hosts": [(os.environ.get("CHANNELS_URLS", "redis://localhost:6379/0"))],
         },
     },
 }
