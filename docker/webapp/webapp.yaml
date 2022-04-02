@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hitman-webapp-deployment
+  namespace: default
+  labels:
+    app: hitman-webapp
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: hitman-webapp
+  template:
+    metadata:
+      labels:
+        app: hitman-webapp
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
+    spec:
+      terminationGracePeriodSeconds: 300
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com
+      containers:
+        - name: hitman-webapp-docker-image
+          image: ghcr.io/john-doherty01/hitman-webapp:VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "100M"
+            limits:
+              cpu: "500m"
+              memory: "1000M"
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 120
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hitman-webapp-load-balancer
+spec:
+  selector:
+    app: hitman-webapp
+  ports:
+    - port: 80
+      name: http
+      targetPort: 8585
+    - port: 443
+      name: https
+      targetPort: 8585
+  type: LoadBalancer
