@@ -35,7 +35,7 @@ spec:
               cpu: "150m"
               memory: "200M"
           ports:
-            - containerPort: 8585
+            - containerPort: 5555
           readinessProbe:
             exec:
               command: [
@@ -104,8 +104,8 @@ spec:
   ports:
     - port: 80
       name: http
-      targetPort: 8585
+      targetPort: 5555
     - port: 443
       name: https
-      targetPort: 8585
+      targetPort: 5555
   type: LoadBalancer

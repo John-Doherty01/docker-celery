@@ -63,8 +63,8 @@ spec:
   ports:
     - port: 80
       name: http
-      targetPort: 8585
+      targetPort: 3000
     - port: 443
       name: https
-      targetPort: 8585
+      targetPort: 3000
   type: LoadBalancer
