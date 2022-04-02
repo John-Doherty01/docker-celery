@@ -39,7 +39,7 @@ spec:
           readinessProbe:
             exec:
               command: [
-                "/usr/bin/python",
+                "python",
                 "-c",
                 "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
               ]
@@ -48,7 +48,7 @@ spec:
           livenessProbe:
             exec:
               command: [
-                "/usr/bin/python",
+                "python",
                 "-c",
                 "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
               ]

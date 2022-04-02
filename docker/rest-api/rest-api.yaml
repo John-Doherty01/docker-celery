@@ -37,17 +37,17 @@ spec:
               cpu: "500m"
               memory: "1000M"
           ports:
-            - containerPort: 8585
+            - containerPort: 8000
           readinessProbe:
             httpGet:
               path: /admin/login/?next=/admin/
-              port: 8585
+              port: 8000
             initialDelaySeconds: 30
             periodSeconds: 20
           livenessProbe:
             httpGet:
               path: /admin/login/?next=/admin/
-              port: 8585
+              port: 8000
             initialDelaySeconds: 15
             periodSeconds: 120
           env:
