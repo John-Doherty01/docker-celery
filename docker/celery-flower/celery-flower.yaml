@@ -92,29 +92,29 @@ spec:
                   key: allowed_host
                   optional: false
             - name: CORS_ALLOWED_ORIGINS
-                valueFrom:
-                  secretKeyRef:
-                    name: hitmansecret
-                    key: cors_allowed_origins
-                    optional: false
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: cors_allowed_origins
+                  optional: false
             - name: CELERY_BROKER_URL
-                valueFrom:
-                  secretKeyRef:
-                    name: hitmansecret
-                    key: celery_broker_url
-                    optional: false
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: celery_broker_url
+                  optional: false
             - name: CELERY_RESULT_URL
-                valueFrom:
-                  secretKeyRef:
-                    name: hitmansecret
-                    key: celery_result_url
-                    optional: false
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: celery_result_url
+                  optional: false
             - name: CHANNELS_URLS
-                valueFrom:
-                  secretKeyRef:
-                    name: hitmansecret
-                    key: channels_url
-                    optional: false
+              valueFrom:
+                secretKeyRef:
+                  name: hitmansecret
+                  key: channels_url
+                  optional: false
 
 ---
 
