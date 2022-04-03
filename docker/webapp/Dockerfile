@@ -5,7 +5,6 @@ ENV PATH /usr/src/app/hitman-webapp/node_modules/.bin:$PATH
 COPY ./ ./
 WORKDIR /usr/src/app/hitman-webapp/
 RUN npm install
-RUN touch .env.production.local
 ENV REACT_ENV_PROD $REACT_ENV_PROD
 RUN cat $REACT_ENV_PROD > .env.production.local
 RUN npm run build
