@@ -8,7 +8,7 @@ COPY ./ ./
 WORKDIR /usr/src/app/hitman-webapp/
 RUN npm install
 RUN npm install serve -g
-RUN cat $REACT_ENV_PROD > .env.production.local
+RUN echo $REACT_ENV_PROD > .env.production.local
 RUN npm run build
 
 CMD ["serve", "-s", "build", "-p", "3000"]
