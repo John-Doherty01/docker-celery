@@ -22,6 +22,7 @@ jobs:
           CR_PAT: ${{ secrets.CR_PAT }}
           KUBECTL_CONFIG: ${{ secrets.KUBECTL_CONFIG }}
           BUILD_NUMBER: ${{ github.run_number }}
+          REACT_ENV_PROD: ${{ github.REACT_ENV_PROD }}
   deploy_to_kubernetes_cluster:
     name: Deploy to Kubernetes Cluster
     needs: push_docker_image_to_github_packages
