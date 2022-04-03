@@ -19,6 +19,6 @@ docker build -f ./docker/celery-flower/Dockerfile . -t hitman/celery-flower
 docker tag hitman/celery-flower $REGISTRY/hitman-celery-flower:$BUILD_TAG
 docker push $REGISTRY/hitman-celery-flower:$BUILD_TAG
 
-docker build -f ./docker/webapp/Dockerfile . -t hitman/webapp
+docker build -f ./docker/webapp/Dockerfile . -t hitman/webapp --build-arg REACT_ENV_PROD=$REACT_ENV_PROD
 docker tag hitman/webapp $REGISTRY/hitman-webapp:$BUILD_TAG
 docker push $REGISTRY/hitman-webapp:$BUILD_TAG
