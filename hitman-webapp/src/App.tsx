@@ -29,6 +29,7 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { TimePicker } from "@mui/lab";
 import { useAuth } from "./authentication/auth-provider";
 import { ApiService } from "./services/hitman";
+import { HOST_URL, WEBSOCKET_URL } from "./authentication/auth";
 
 interface CeleryTaskUpdate {
   progress: number;
@@ -145,7 +146,7 @@ function ScheduleCeleryTask({
 function App() {
   const [progressValue, setProgressValue] = useState(0);
   const CreateCeleryTask = () => {
-    fetch("http://localhost:8000/hitmen/start-job", {
+    fetch(HOST_URL + "hitmen/start-job", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -160,7 +161,7 @@ function App() {
       })
       .then((data) => {
         const socket = new WebSocket(
-          `ws://localhost:8000/task/progress/${data.celery_task_id}/`
+          WEBSOCKET_URL + `task/progress/${data.celery_task_id}/`
         );
         socket.onmessage = (event) => {
           const parsedEvent: CeleryTaskUpdate = JSON.parse(event.data);
@@ -182,7 +183,7 @@ function App() {
 
   const onSubmitScheduledTask = (newDate: Date | null, dayOfWeek: string[]) => {
     if (newDate !== null) {
-      fetch("http://localhost:8000/hitmen/schedule", {
+      fetch(HOST_URL + "hitmen/schedule", {
         method: "POST",
         headers: {
           Accept: "application/json",
