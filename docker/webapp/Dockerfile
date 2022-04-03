@@ -7,6 +7,8 @@ ENV PATH /usr/src/app/hitman-webapp/node_modules/.bin:$PATH
 COPY ./ ./
 WORKDIR /usr/src/app/hitman-webapp/
 RUN npm install
-RUN cat $REACT_ENV_PROD > .env.local
+RUN npm install serve -g
+RUN cat $REACT_ENV_PROD > .env.production.local
+RUN npm run build
 
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build", "-p", "3000"]
