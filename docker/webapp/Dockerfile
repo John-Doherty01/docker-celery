@@ -1,4 +1,5 @@
 FROM node:17.5-alpine
+ARG REACT_ENV_PROD
 EXPOSE 3000
 
 WORKDIR /usr/src/app
