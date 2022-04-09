@@ -56,7 +56,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           reject(err);
         });
     });
-  }, [HOST_URL, navigate]);
+  }, [CLIENT_ID, CLIENT_SECRET, HOST_URL, navigate]);
 
   const getClient = useCallback((): AxiosInstance => {
     const newInstance = axios.create();
