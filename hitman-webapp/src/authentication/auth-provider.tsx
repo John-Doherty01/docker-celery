@@ -5,8 +5,6 @@ import { reducer } from "./reducer";
 import { initialAuthState, User } from "./auth-state";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import {
-  CLIENT_ID,
-  CLIENT_SECRET,
   TOKEN_LOCALSTORAGE_KEY,
 } from "./auth";
 
@@ -19,6 +17,9 @@ let refreshPromise: Promise<AxiosResponse<any, any>> | null = null;
 export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
   const { children } = opts;
   const HOST_URL = process.env.REACT_APP_API_HOST_URL || "http://localhost:8000/";
+  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID || "FSb5TMUaS4GSdaFjj1M8kfwec2vxe7EH3eO8pdcx";
+  const CLIENT_SECRET = process.env.REACT_APP_CLIENT_SECRET || "0KobqEc4etm10YU3IeEdJ9k0Pv6GTuUl8UO15WnrlkkIgJ9MgVZqzCApFTWSaURudxlDj3gIUJcwkPXcORV1i1kcGrEXDXF2rxNMWtm4Hr6iuNDncp3c5g7P5BMY8mo7";
+
   const [state, dispatch] = useReducer(reducer, initialAuthState);
   const navigate = useNavigate();
   const refreshToken = useCallback((): Promise<AxiosResponse<any>> => {
@@ -131,7 +132,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           });
       });
     },
-    [HOST_URL, navigate]
+    [CLIENT_ID, CLIENT_SECRET, HOST_URL, navigate]
   );
 
   const createUser = useCallback(
