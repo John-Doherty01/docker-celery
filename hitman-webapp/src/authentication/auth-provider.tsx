@@ -7,7 +7,6 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 import {
   CLIENT_ID,
   CLIENT_SECRET,
-  HOST_URL,
   TOKEN_LOCALSTORAGE_KEY,
 } from "./auth";
 
@@ -19,6 +18,7 @@ let refreshPromise: Promise<AxiosResponse<any, any>> | null = null;
 
 export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
   const { children } = opts;
+  const HOST_URL = process.env.REACT_APP_API_HOST_URL || "http://localhost:8000/";
   const [state, dispatch] = useReducer(reducer, initialAuthState);
   const navigate = useNavigate();
   const refreshToken = useCallback((): Promise<AxiosResponse<any>> => {
@@ -55,7 +55,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           reject(err);
         });
     });
-  }, [navigate]);
+  }, [HOST_URL, navigate]);
 
   const getClient = useCallback((): AxiosInstance => {
     const newInstance = axios.create();
@@ -98,7 +98,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
       }
     );
     return newInstance;
-  }, [refreshToken]);
+  }, [HOST_URL, refreshToken]);
 
   const login = useCallback(
     (username: string, password: string): Promise<AxiosResponse<any>> => {
@@ -131,7 +131,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
           });
       });
     },
-    [navigate]
+    [HOST_URL, navigate]
   );
 
   const createUser = useCallback(
@@ -159,7 +159,7 @@ export const AuthProvider = (opts: AuthProviderOptions): JSX.Element => {
       await request;
       await login(username, password);
     },
-    [login]
+    [HOST_URL, login]
   );
 
   const contextValue = useMemo(() => {
