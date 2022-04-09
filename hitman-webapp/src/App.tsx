@@ -205,6 +205,7 @@ function App() {
   };
 
   const { getClient } = useAuth();
+
   useMemo(() => {
     const service = new ApiService(getClient());
     service.getHitmen().then((res) => {
