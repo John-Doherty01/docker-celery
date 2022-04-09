@@ -37,23 +37,17 @@ spec:
           ports:
             - containerPort: 5555
           readinessProbe:
-            exec:
-              command: [
-                "python",
-                "-c",
-                "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
-              ]
-            initialDelaySeconds: 120
-            periodSeconds: 300
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 30
+            periodSeconds: 20
           livenessProbe:
-            exec:
-              command: [
-                "python",
-                "-c",
-                "\"import os;from celery.app.control import Inspect;from api import celery_app;exit(0 if os.environ['HOSTNAME'] in ','.join(Inspect(app=celery_app).stats().keys()) else 1)\""
-              ]
-            initialDelaySeconds: 120
-            periodSeconds: 300
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 15
+            periodSeconds: 120
           env:
             - name: DATABASE_NAME
               valueFrom:
@@ -117,7 +111,6 @@ spec:
                   optional: false
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
