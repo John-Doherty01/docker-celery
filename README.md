@@ -13,3 +13,8 @@ docker-compose contains all required containers.
 - Visit http://localhost:5555/ for celery flower.
 - `celery -A findmyhitman worker --beat --loglevel=DEBUG --scheduler django_celery_beat.schedulers:DatabaseScheduler`
 - `docker run -dp 3000:3000 hitman/webapp`
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
