@@ -1,5 +1,7 @@
 # docker-celery
 
+If you want a production ready template to deploy to kubernetes checkout out here: https://github.com/doherty-labs/django-rest-api
+
 Getting started
 
 docker-compose contains all required containers. 
